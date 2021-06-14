@@ -1,45 +1,38 @@
-const upBtn = document.querySelector('.up-button')
-const downBtn = document.querySelector('.down-button')
-const sidebar = document.querySelector('.sidebar')
-const container = document.querySelector('.container')
-const mainSlide = document.querySelector('.main-slide')
+const item = document.querySelector('.item')
+const placeholders = document.querySelectorAll('.placeholder')
 
-const slidesCount = mainSlide.querySelectorAll('div').length
-let activeSlideIndex = 0
+item.addEventListener('dragstart', dragstart)
+item.addEventListener('dragend', dragend)
 
-sidebar.style.top = `-${(slidesCount - 1) * 100}vh`
+for (const placeholder of placeholders) {
+    placeholder.addEventListener('dragover', dragover)
+    placeholder.addEventListener('dragenter', dragenter)
+    placeholder.addEventListener('dragleave', dragleave)
+    placeholder.addEventListener('drop', dragdrop)
+}
 
-upBtn.addEventListener('click', () => {
-    changeSlide('up')
-})
+function dragstart(event) {
+    event.target.classList.add('hold')
+    setTimeout(() => event.target.classList.add('hide'), 0)
+}
 
-downBtn.addEventListener('click', () => {
-    changeSlide('down')
-})
+function dragend(event) {
+    event.target.className = 'item'
+}
 
-document.addEventListener('keydown', event => {
-    if (event.key === 'ArrowUp') {
-        changeSlide('up')
-    } else if (event.key === 'ArrowDown') {
-        changeSlide('down')
-    }
-})
+function dragover(event) {
+    event.preventDefault()
+}
 
-function changeSlide(direction) {
-    if (direction === 'up') {
-        activeSlideIndex++
-        if (activeSlideIndex === slidesCount) {
-            activeSlideIndex = 0   
-        }
-    } else if (direction === 'down') {
-        activeSlideIndex--
-        if (activeSlideIndex < 0) {
-            activeSlideIndex = slidesCount - 1
-        }
-    }
+function dragenter(event) {
+    event.target.classList.add('hovered')
+}
 
-    const height = container.clientHeight
+function dragleave(event) {
+    event.target.classList.remove('hovered')
+}
 
-    mainSlide.style.transform = `translateY(-${activeSlideIndex * height}px)`
-    sidebar.style.transform = `translateY(${activeSlideIndex * height}px)`
+function dragdrop(event) {
+    event.target.classList.remove('hovered')
+    event.target.append(item)  
 }
